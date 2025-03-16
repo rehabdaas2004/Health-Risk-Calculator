@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Risk Calculator</title>
+</head>
+<body>
+    <h2>Health Risk Calculator</h2>
+    <form id="riskForm">
+        <label>Age: <input type="number" id="age"></label><br>
+        <label>BMI: <input type="number" id="bmi" step="0.1"></label><br>
+        <label>Blood Pressure: 
+            <select id="bloodPressure">
+                <option value="normal">Normal</option>
+                <option value="elevated">Elevated</option>
+                <option value="stage1">Stage 1</option>
+                <option value="stage2">Stage 2</option>
+                <option value="crisis">Crisis</option>
+            </select>
+        </label><br>
+        <label>Family History (comma separated): 
+            <input type="text" id="familyHistory">
+        </label><br>
+        <button type="submit">Calculate Risk</button>
+    </form>
+
+    <p id="result"></p>
+
+    <script>
+        document.getElementById('riskForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const age = document.getElementById('age').value;
+            const bmi = document.getElementById('bmi').value;
+            const bloodPressure = document.getElementById('bloodPressure').value;
+            const familyHistory = document.getElementById('familyHistory').value.split(',');
+
+            const response = await fetch("http://localhost:3000/calculate-risk", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ age, bmi, bloodPressure, familyHistory })
+            });
+
+            const data = await response.json();
+            document.getElementById("result").innerText = `Risk Score: ${data.riskScore}, Category: ${data.category}`;
+        });
+    </script>
+</body>
+</html>
